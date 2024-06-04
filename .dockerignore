@@ -1,0 +1,5 @@
+__pycache__
+Dockerfile
+envs.json
+custom_data
+collected_data
