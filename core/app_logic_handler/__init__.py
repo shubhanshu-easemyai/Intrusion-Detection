@@ -304,10 +304,6 @@ class LogicHandler:
                             detected_object["object_id"],
                         )
 
-                        # logger.debug(glb.loaded_camera_ids)
-                        # logger.debug(glb.loaded_camera_ids[source_details["source_id"]]["extra"][_id]["roi"]["roi_type"])
-                        # logger.debug(glb.sources_list)
-
                         object_polygons[object_id] = {
                             "index": _id,
                             "name": detected_object["name"],
@@ -390,277 +386,41 @@ class LogicHandler:
                             # if not glb.polygons[_id].contains(detected_polygon):
                                 pass
 
-                            # if not centroid.within(glb.polygons[_id]):
-                            #     if object_id in self.object_tracker:
-                            #         if self.object_tracker[object_id]["missing"]:
-                            #             pass
-
-                            #         elif self.object_tracker[object_id]["alert"] and self.object_tracker[object_id]["roi_polygon"] == glb.polygons[_id]:
-                            #             if not self.object_tracker[object_id]["missing"]:
-                            #                 self.object_tracker[object_id]["missing"] = True
-                            #                 logger.debug(self.object_tracker[object_id]["missing"])
-                            #                 compliance_check_info[object_id] = {
-                            #                     "object_id": object_id,
-                            #                     "object_metadata": object_polygons[object_id]["detected_object"],
-                            #                     "source_details": SourceDetails(
-                            #                         **glb.sources_list[int(object_polygons[object_id]["index"])][
-                            #                             "source"
-                            #                         ].logs_payload()
-                            #                     ),
-                            #                     "user_data": glb.sources_list[int(object_polygons[object_id]["index"])][
-                            #                         "user"
-                            #                     ],
-                            #                     "roi_details": copy.deepcopy(
-                            #                         glb.sources_list[int(object_polygons[object_id]["index"])]["roi"]
-                            #                     ),
-                            #                     "roi_name": glb.sources_list[_id]["roi"]["roi_name"],
-                            #                     "area": "Inside absent in region {}".format(
-                            #                         glb.sources_list[_id]["roi"]["roi_name"]
-                            #                     ),
-                            #                 }
-                            #                     # "vanished": datetime.datetime.utcnow,
-
-                            #                 # logger.debug(compliance_check_info[object_id]["vanished"])
-
-                            #                 self.post_process(
-                            #                     object_id = object_id,
-                            #                     storage_path=self.image_storage_path,
-                            #                     compliance_check_info=copy.deepcopy(compliance_check_info),
-                            #                     alert_schema=copy.deepcopy(self.alert_metadata),
-                            #                     index=_id,
-                            #                     detected_object=copy.deepcopy(detected_object),
-                            #                     key=key,
-                            #                     headers=source_details,
-                            #                     transaction_id=transaction_id,
-                            #                     alert_text="Inside absent in {}",
-                            #                     **data,
-                            #                 )
-
-                        elif var == "outside":
-                            """
-                                In this alert of movement near the parameter is raised.
-                            """
-                            logger.debug(glb.polygons[_id])
-                            if centroid.within(glb.polygons[_id]):
-                                if object_id not in self.object_tracker:
-                                    self.object_tracker[object_id] = {
-                                        "last_detected": None,
-                                        "created": utc_now,
-                                        "alert": False,
-                                        "detected_object": copy.deepcopy(detected_object),
-                                        "polygon": detected_polygon,
-                                        "roi_polygon": glb.polygons[_id],
-                                        "missing": False,
-                                    }
-
-                                if self.object_tracker[object_id]["alert"]:
-                                    if self.object_tracker[object_id]['last_detected']:
-                                        glb.sample_generator[object_id] = self.object_tracker[object_id]
-                                        self.object_tracker[object_id]["last_detected"] = utc_now
-
-                                if not self.object_tracker[object_id]["alert"]:
-                                    time_diff = (utc_now - self.object_tracker[object_id]["created"]).seconds
-                                    if time_diff >= 0:
-                                        compliance_check_info[object_id] = {
-                                            "object_id": object_id,
-                                            "object_metadata": object_polygons[object_id]["detected_object"],
-                                            
-                                            "source_details": SourceDetails(
-                                                **glb.sources_list[int(object_polygons[object_id]["index"])][
-                                                    "source"
-                                                ].logs_payload()
-                                            ),
-
-                                            "user_data": glb.sources_list[int(object_polygons[object_id]["index"])][
-                                                "user"
-                                            ],
-                                            "roi_details": copy.deepcopy(
-                                                glb.sources_list[int(object_polygons[object_id]["index"])]["roi"]
-                                            ),
-                                            "roi_name": glb.sources_list[_id]["roi"]["roi_name"],
-                                            "area": "Outside {}".format(
-                                                glb.sources_list[_id]["roi"]["roi_name"]
-                                            ),
-                                        }
-
-                                        # logger.debug(compliance_check_info[object_id]["source_details"]["source_owner"])
-
-                                        self.object_tracker[object_id]["alert"] = True
-                                        self.object_tracker[object_id]["last_detected"] = utc_now
-                                        # logger.debug(object_id)
-                                        
-                                        self.post_process(
-                                            object_id = object_id,
-                                            storage_path=self.image_storage_path,
-                                            compliance_check_info = copy.deepcopy(compliance_check_info),
-                                            alert_schema=copy.deepcopy(self.alert_metadata),
-                                            index=_id,
-                                            detected_object=copy.deepcopy(detected_object),
-                                            key=key,
-                                            headers=source_details,
-                                            transaction_id=transaction_id,
-                                            alert_text="Outside {}",
-                                            **data,
-                                        )
-
-                        elif var == "wall":
-                            """
-                                In this alert of intrusion attempt on the wall is raised.
-                            """
-                            # logger.debug(glb.polygons[_id])
-                            # if centroid.within(glb.polygons[_id]):
-                            if glb.polygons[_id].contains(detected_polygon):
-                                if object_id not in self.object_tracker:
-                                    self.object_tracker[object_id] = {
-                                        "last_dectectec"
-                                    }
-                            if glb.polygons[_id].contains(detected_polygon):
-                                if object_id not in self.object_tracker:
-                                    self.object_tracker[object_id] = {
-                                        "last_detected": None,
-                                        "created": utc_now,
-                                        "alert": False,
-                                        "detected_object": copy.deepcopy(detected_object),
-                                        "polygon": detected_polygon,
-                                        "roi_polygon": glb.polygons[_id],
-                                        "missing": False,
-                                    }
-
-                                if self.object_tracker[object_id]["alert"]:
-                                    if self.object_tracker[object_id]['last_detected']:
-                                        glb.sample_generator[object_id] = self.object_tracker[object_id]
-                                        self.object_tracker[object_id]["last_detected"] = utc_now
-
-                                if not self.object_tracker[object_id]["alert"]:
-                                    time_diff = (utc_now - self.object_tracker[object_id]["created"]).seconds
-                                    if time_diff >= 0:
-                                        compliance_check_info[object_id] = {
-                                            "object_id": object_id,
-                                            "object_metadata": object_polygons[object_id]["detected_object"],
-                                            
-                                            "source_details": SourceDetails(
-                                                **glb.sources_list[int(object_polygons[object_id]["index"])][
-                                                    "source"
-                                                ].logs_payload()
-                                            ),
-
-                                            "user_data": glb.sources_list[int(object_polygons[object_id]["index"])][
-                                                "user"
-                                            ],
-                                            "roi_details": copy.deepcopy(
-                                                glb.sources_list[int(object_polygons[object_id]["index"])]["roi"]
-                                            ),
-                                            "roi_name": glb.sources_list[_id]["roi"]["roi_name"],
-                                            "area": "Wall {}".format(
-                                                glb.sources_list[_id]["roi"]["roi_name"]
-                                            ),
-                                        }
-
-                                        logger.debug(glb.sources_list[_id]["roi"]["roi_name"])
-
-                                        # logger.debug(compliance_check_info[object_id]["source_details"]["source_owner"])
-
-                                        self.object_tracker[object_id]["alert"] = True
-                                        self.object_tracker[object_id]["last_detected"] = utc_now
-                                        # logger.debug(object_id)
-                                        
-                                        self.post_process(
-                                            object_id = object_id,
-                                            storage_path=self.image_storage_path,
-                                            compliance_check_info = copy.deepcopy(compliance_check_info),
-                                            alert_schema=copy.deepcopy(self.alert_metadata),
-                                            index=_id,
-                                            detected_object=copy.deepcopy(detected_object),
-                                            key=key,
-                                            headers=source_details,
-                                            transaction_id=transaction_id,
-                                            alert_text="Wall {}",
-                                            **data,
-                                        )
-
-                        # if not centroid.within(glb.polygons[_id]):
-                        if not glb.polygons[_id].contains(detected_polygon):
-                            pass
-
-                        # if glb.polygons[_id].contains(detected_polygon):
-                        #     if object_id not in self.object_tracker:
-                        #         self.object_tracker[object_id] = {
-                        #             "last_detected": None,
-                        #             "created": utc_now,
-                        #             "alert": False,
-                        #             "detected_object": copy.deepcopy(detected_object),
-                        #             "polygon": detected_polygon,
-                        #             "roi_polygon": glb.polygons[_id],
-                        #             "missing": False,
-                        #         }
-
-                        #     if self.object_tracker[object_id]["alert"]:
-                        #         if self.object_tracker[object_id]['last_detected']:
-                        #             glb.sample_generator[object_id] = self.object_tracker[object_id]
-                        #             self.object_tracker[object_id]["last_detected"] = utc_now
-
-                        #     if not self.object_tracker[object_id]["alert"]:
-                        #         time_diff = (utc_now - self.object_tracker[object_id]["created"]).seconds
-                        #         if time_diff >= 0:
-                        #             compliance_check_info[object_id] = {
-                        #                 "object_id": object_id,
-                        #                 "object_metadata": object_polygons[object_id]["detected_object"],
-                                        
-                        #                 "source_details": SourceDetails(
-                        #                     **glb.sources_list[int(object_polygons[object_id]["index"])][
-                        #                         "source"
-                        #                     ].logs_payload()
-                        #                 ),
-
-                        #                 "user_data": glb.sources_list[int(object_polygons[object_id]["index"])][
-                        #                     "user"
-                        #                 ],
-                        #                 "roi_details": copy.deepcopy(
-                        #                     glb.sources_list[int(object_polygons[object_id]["index"])]["roi"]
-                        #                 ),
-                        #                 "roi_name": glb.sources_list[_id]["roi"]["roi_name"],
-                        #                 "area": "Patient detection in region {}".format(
-                        #                     glb.sources_list[_id]["roi"]["roi_name"]
-                        #                 ),
+                        # elif var == "outside":
+                        #     """
+                        #         In this alert of movement near the parameter is raised.
+                        #     """
+                        #     logger.debug(glb.polygons[_id])
+                        #     if centroid.within(glb.polygons[_id]):
+                        #         if object_id not in self.object_tracker:
+                        #             self.object_tracker[object_id] = {
+                        #                 "last_detected": None,
+                        #                 "created": utc_now,
+                        #                 "alert": False,
+                        #                 "detected_object": copy.deepcopy(detected_object),
+                        #                 "polygon": detected_polygon,
+                        #                 "roi_polygon": glb.polygons[_id],
+                        #                 "missing": False,
                         #             }
 
-                        #             # logger.debug(compliance_check_info[object_id]["source_details"]["source_owner"])
+                        #         if self.object_tracker[object_id]["alert"]:
+                        #             if self.object_tracker[object_id]['last_detected']:
+                        #                 glb.sample_generator[object_id] = self.object_tracker[object_id]
+                        #                 self.object_tracker[object_id]["last_detected"] = utc_now
 
-                        #             self.object_tracker[object_id]["alert"] = True
-                        #             self.object_tracker[object_id]["last_detected"] = utc_now
-                        #             logger.debug(object_id)
-                                    
-                        #             self.post_process(
-                        #                 object_id = object_id,
-                        #                 storage_path=self.image_storage_path,
-                        #                 compliance_check_info = copy.deepcopy(compliance_check_info),
-                        #                 alert_schema=copy.deepcopy(self.alert_metadata),
-                        #                 index=_id,
-                        #                 detected_object=copy.deepcopy(detected_object),
-                        #                 key=key,
-                        #                 headers=source_details,
-                        #                 transaction_id=transaction_id,
-                        #                 alert_text="patient detection in region {}",
-                        #                 **data,
-                        #             )
-
-                        # if not glb.polygons[_id].contains(detected_polygon):
-                        #     if object_id in self.object_tracker:
-                        #         if self.object_tracker[object_id]["missing"]:
-                        #             pass
-
-                        #         elif self.object_tracker[object_id]["alert"] and self.object_tracker[object_id]["roi_polygon"] == glb.polygons[_id]:
-                        #             if not self.object_tracker[object_id]["missing"]:
-                        #                 self.object_tracker[object_id]["missing"] = True
-                        #                 logger.debug(self.object_tracker[object_id]["missing"])
+                        #         if not self.object_tracker[object_id]["alert"]:
+                        #             time_diff = (utc_now - self.object_tracker[object_id]["created"]).seconds
+                        #             if time_diff >= 0:
                         #                 compliance_check_info[object_id] = {
                         #                     "object_id": object_id,
                         #                     "object_metadata": object_polygons[object_id]["detected_object"],
+                                            
                         #                     "source_details": SourceDetails(
                         #                         **glb.sources_list[int(object_polygons[object_id]["index"])][
                         #                             "source"
                         #                         ].logs_payload()
                         #                     ),
+
                         #                     "user_data": glb.sources_list[int(object_polygons[object_id]["index"])][
                         #                         "user"
                         #                     ],
@@ -668,28 +428,110 @@ class LogicHandler:
                         #                         glb.sources_list[int(object_polygons[object_id]["index"])]["roi"]
                         #                     ),
                         #                     "roi_name": glb.sources_list[_id]["roi"]["roi_name"],
-                        #                     "area": "patient absent in region {}".format(
+                        #                     "area": "Outside {}".format(
                         #                         glb.sources_list[_id]["roi"]["roi_name"]
                         #                     ),
                         #                 }
-                        #                     # "vanished": datetime.datetime.utcnow,
 
-                        #                 # logger.debug(compliance_check_info[object_id]["vanished"])
+                        #                 # logger.debug(compliance_check_info[object_id]["source_details"]["source_owner"])
 
+                        #                 self.object_tracker[object_id]["alert"] = True
+                        #                 self.object_tracker[object_id]["last_detected"] = utc_now
+                        #                 # logger.debug(object_id)
+                                        
                         #                 self.post_process(
                         #                     object_id = object_id,
                         #                     storage_path=self.image_storage_path,
-                        #                     compliance_check_info=copy.deepcopy(compliance_check_info),
+                        #                     compliance_check_info = copy.deepcopy(compliance_check_info),
                         #                     alert_schema=copy.deepcopy(self.alert_metadata),
                         #                     index=_id,
                         #                     detected_object=copy.deepcopy(detected_object),
                         #                     key=key,
                         #                     headers=source_details,
                         #                     transaction_id=transaction_id,
-                        #                     alert_text="intrusion absent in {}",
+                        #                     alert_text="Outside {}",
                         #                     **data,
                         #                 )
-        
+
+                        # elif var == "wall":
+                        #     """
+                        #         In this alert of intrusion attempt on the wall is raised.
+                        #     """
+                        #     # logger.debug(glb.polygons[_id])
+                        #     # if centroid.within(glb.polygons[_id]):
+                        #     if glb.polygons[_id].contains(detected_polygon):
+                        #         if object_id not in self.object_tracker:
+                        #             self.object_tracker[object_id] = {
+                        #                 "last_dectectec"
+                        #             }
+                        #     if glb.polygons[_id].contains(detected_polygon):
+                        #         if object_id not in self.object_tracker:
+                        #             self.object_tracker[object_id] = {
+                        #                 "last_detected": None,
+                        #                 "created": utc_now,
+                        #                 "alert": False,
+                        #                 "detected_object": copy.deepcopy(detected_object),
+                        #                 "polygon": detected_polygon,
+                        #                 "roi_polygon": glb.polygons[_id],
+                        #                 "missing": False,
+                        #             }
+
+                        #         if self.object_tracker[object_id]["alert"]:
+                        #             if self.object_tracker[object_id]['last_detected']:
+                        #                 glb.sample_generator[object_id] = self.object_tracker[object_id]
+                        #                 self.object_tracker[object_id]["last_detected"] = utc_now
+
+                        #         if not self.object_tracker[object_id]["alert"]:
+                        #             time_diff = (utc_now - self.object_tracker[object_id]["created"]).seconds
+                        #             if time_diff >= 0:
+                        #                 compliance_check_info[object_id] = {
+                        #                     "object_id": object_id,
+                        #                     "object_metadata": object_polygons[object_id]["detected_object"],
+                                            
+                        #                     "source_details": SourceDetails(
+                        #                         **glb.sources_list[int(object_polygons[object_id]["index"])][
+                        #                             "source"
+                        #                         ].logs_payload()
+                        #                     ),
+
+                        #                     "user_data": glb.sources_list[int(object_polygons[object_id]["index"])][
+                        #                         "user"
+                        #                     ],
+                        #                     "roi_details": copy.deepcopy(
+                        #                         glb.sources_list[int(object_polygons[object_id]["index"])]["roi"]
+                        #                     ),
+                        #                     "roi_name": glb.sources_list[_id]["roi"]["roi_name"],
+                        #                     "area": "Wall {}".format(
+                        #                         glb.sources_list[_id]["roi"]["roi_name"]
+                        #                     ),
+                        #                 }
+
+                        #                 logger.debug(glb.sources_list[_id]["roi"]["roi_name"])
+
+                        #                 # logger.debug(compliance_check_info[object_id]["source_details"]["source_owner"])
+
+                        #                 self.object_tracker[object_id]["alert"] = True
+                        #                 self.object_tracker[object_id]["last_detected"] = utc_now
+                        #                 # logger.debug(object_id)
+                                        
+                        #                 self.post_process(
+                        #                     object_id = object_id,
+                        #                     storage_path=self.image_storage_path,
+                        #                     compliance_check_info = copy.deepcopy(compliance_check_info),
+                        #                     alert_schema=copy.deepcopy(self.alert_metadata),
+                        #                     index=_id,
+                        #                     detected_object=copy.deepcopy(detected_object),
+                        #                     key=key,
+                        #                     headers=source_details,
+                        #                     transaction_id=transaction_id,
+                        #                     alert_text="Wall {}",
+                        #                     **data,
+                        #                 )
+
+                        #     # if not centroid.within(glb.polygons[_id]):
+                        #     if not glb.polygons[_id].contains(detected_polygon):
+                        #         pass
+
         except Exception as e:
             logger.error(
             "Error on line {}  EXCEPTION: {}".format(sys.exc_info()[-1].tb_lineno, e)
